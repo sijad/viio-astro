@@ -1,437 +1,100 @@
 ---
-import Button from "./Button.astro";
-import Logo from "../assets/logo.svg";
-import type { Link } from "../types";
+import { languages } from "../i18n/ui";
+import { useTranslations, getLangFromUrl } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 interface Props {
-  logoUrl: string;
-  logoAlt: string;
-  links: Link[];
-  link1?: Link;
-  link2?: Link;
+  lang: keyof typeof languages;
 }
-
-const { logoUrl, logoAlt, link1, link2, links } = Astro.props;
 ---
 
-<header>
-  <sy-head>
-    <div class="inner u-container">
-      <div class="wrapper">
-        <a class="logo" href={logoUrl}>
-          <Logo />
-          <span class="u-sr-only">{logoAlt}</span>
-        </a>
-
-        <div class="menu">
-          <ul>
-            {
-              links.map((l) => (
-                <li>
-                  <a href={l.url}>{l.title}</a>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-
-        <div class="buttons">
-          {
-            link1 ? (
-              <a class="login" href={link1.url}>
-                {link1.title}
-              </a>
-            ) : null
-          }
-          {link2 ? <Button {...link2} revealable={false} /> : null}
-
-          <button type="button" class="toggle" aria-label="">
-            <span class="u-sr-only">Toggle Mobile Menu</span>
-            <span aria-hidden>
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
-          </button>
-        </div>
-      </div>
+<header class="border-b border-border bg-background sticky top-0 z-50">
+  <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <a
+        href={`/${lang}`}
+        class="font-bold text-xl tracking-tight flex items-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-6 h-6"
+          ><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+          ></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"
+          ></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg
+        >
+        MD Editor
+      </a>
     </div>
-  </sy-head>
+
+    <nav
+      class="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground"
+    >
+      <a href="#features" class="hover:text-foreground transition-colors"
+        >{t("nav.features")}</a
+      >
+      <a href="#how-it-works" class="hover:text-foreground transition-colors"
+        >{t("nav.howItWorks")}</a
+      >
+      <!-- <a href="#support" class="hover:text-foreground transition-colors">{t("nav.support")}</a> -->
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2 text-sm text-muted-foreground">
+        {
+          Object.entries(languages).map(([l, label]) =>
+            l === lang ? (
+              <span class="font-semibold text-foreground cursor-default">
+                {l.toUpperCase()}
+              </span>
+            ) : (
+              <a href={`/${l}`} class="hover:text-foreground transition-colors">
+                {l.toUpperCase()}
+              </a>
+            ),
+          )
+        }
+      </div>
+
+      <a
+        href="https://buymeacoffee.com/daliego"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hidden sm:flex items-center gap-2 bg-yellow-400 text-yellow-950 px-3 py-1.5 rounded-md text-sm font-semibold hover:bg-yellow-300 transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-4 h-4"
+          ><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path
+            d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line
+            x1="6"
+            y1="1"
+            x2="6"
+            y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line
+            x1="14"
+            y1="1"
+            x2="14"
+            y2="4"></line></svg
+        >
+        {t("nav.buyMeCoffee")}
+      </a>
+    </div>
+  </div>
 </header>
-
-<style>
-  sy-head {
-    --br: 1.5rem;
-
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    color: var(--color-text);
-    margin: 0 auto;
-    transition: transform 0.3s var(--ease-out-cubic);
-
-    :global(body.is-nav-hidden) & {
-      transform: translateY(-100%);
-    }
-
-    @media (--mq-tablet-sm) {
-      --br: 1rem;
-    }
-
-    &::before,
-    &::after {
-      content: "";
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
-    }
-
-    &::after {
-      background: rgba(var(--rgb-brand-3), 0.7);
-      transition: transform 0.3s var(--ease-out-cubic);
-      transform: scaleY(0);
-      transform-origin: top;
-      backdrop-filter: blur(15px);
-    }
-
-    :global(body.is-nav-small) & {
-      &::after {
-        transform: scaleY(1);
-      }
-    }
-  }
-
-  .inner {
-    padding: 1rem 0;
-    transition: padding 0.3s var(--ease-out-cubic);
-
-    :global(body.is-nav-small) & {
-      padding: 0.5rem 0;
-    }
-  }
-
-  .wrapper {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    @media (--mq-tablet) {
-      flex-wrap: wrap;
-    }
-  }
-
-  .logo {
-    position: relative;
-    z-index: 3;
-
-    svg {
-      width: 2.4rem;
-
-      :global(path) {
-        fill: currentcolor;
-      }
-    }
-  }
-
-  .menu {
-    display: flex;
-    position: absolute;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    width: min-content;
-
-    @media (--mq-tablet) {
-      align-items: center;
-      justify-content: center;
-      width: 100vw;
-      height: 100vh;
-      position: fixed;
-      z-index: 2;
-      background: var(--color-brand-3);
-      top: 0;
-      left: 0;
-      clip-path: inset(0 0 0%);
-      transition: clip-path 0.5s var(--ease-out-expo);
-
-      :global(body:not(.is-nav-opened)) & {
-        clip-path: inset(0 0 100%);
-        pointer-events: none;
-      }
-
-      :global(body.is-nav-small:not(.is-nav-opened)) & {
-        clip-path: inset(
-          0 0 calc(100% - 3.75rem) round 0 0 var(--br) var(--br)
-        );
-      }
-    }
-
-    @media (--mq-phone) {
-      :global(body.is-nav-small:not(.is-nav-opened)) & {
-        clip-path: inset(0 0 calc(100% - 3.375rem) round 0 0 1rem 1rem);
-      }
-    }
-
-    :global(ul) {
-      @extend %u-text;
-
-      --fs: var(--font-size-sm);
-      display: flex;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      align-items: center;
-      gap: 1.3125em;
-
-      @media (--mq-tablet) {
-        color: var(--color-brand-1);
-      }
-
-      @media (--mq-tablet) {
-        flex-direction: column;
-        font-size: 2rem;
-        gap: 1rem;
-      }
-
-      :global(li) {
-        display: flex;
-        align-items: center;
-        gap: 1.3125em;
-
-        @media (--mq-tablet) {
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        &::after {
-          display: inline-block;
-          content: "";
-          width: 2px;
-          height: 2px;
-        }
-
-        &:last-child {
-          &::after {
-            display: none;
-          }
-        }
-      }
-
-      :global(a) {
-        text-decoration: none;
-        position: relative;
-
-        &::before {
-          content: "";
-          position: absolute;
-          height: 2px;
-          background: currentcolor;
-          top: 115%;
-          width: 100%;
-          left: 0;
-          pointer-events: none;
-          transform: scaleX(0);
-          transition: transform 0.3s var(--ease-out-expo);
-          transform-origin: right;
-        }
-
-        &:hover,
-        &:focus {
-          &::before {
-            transform: scaleX(1);
-            transform-origin: left;
-          }
-        }
-      }
-    }
-  }
-
-  .buttons {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    z-index: 2;
-
-    @media (--mq-tablet) {
-      gap: 1.25rem;
-    }
-  }
-
-  .signup {
-    @media (--mq-phone) {
-      display: none;
-    }
-  }
-
-  .login {
-    @extend %u-text;
-
-    --fs: var(--font-size-sm);
-    position: relative;
-    transform: translateY(0);
-    transition: 0.3s var(--ease-out-expo);
-    transition-property: transform, color;
-
-    &::after {
-      content: "";
-      position: absolute;
-      height: 2px;
-      background: currentcolor;
-      top: 115%;
-      width: 100%;
-      left: 0;
-      pointer-events: none;
-      transform: scaleX(0);
-      transition: transform 0.3s var(--ease-out-expo);
-      transform-origin: right;
-    }
-
-    &:hover,
-    &:focus {
-      &::after {
-        transform: scaleX(1);
-        transform-origin: left;
-      }
-    }
-
-    @media (--mq-phone) {
-      display: none;
-    }
-  }
-
-  .toggle {
-    border: none;
-    background: none;
-    padding: 0;
-    cursor: pointer;
-    align-self: normal;
-    align-items: center;
-    display: none;
-    z-index: 2;
-    color: var(--color-brand-1);
-    transition: color 0.3s var(--ease-out-expo);
-
-    :global(.has-no-bg &) {
-      color: var(--color-brand-3);
-    }
-
-    :global(body.is-nav-opened &),
-    :global(body.is-nav-small) & {
-      color: var(--color-brand-1);
-    }
-
-    @media (--mq-tablet) {
-      display: flex;
-    }
-
-    > span:last-child {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 1.5rem;
-      width: 2.25rem;
-
-      span {
-        display: flex;
-        width: 100%;
-        height: 4px;
-        background: currentcolor;
-        border-radius: 10px;
-        transition: transform 0.2s var(--ease-out-cubic);
-        transform: translateZ(0);
-
-        &:nth-child(2) {
-          transition-property: opacity;
-        }
-      }
-    }
-
-    :global(body.is-nav-opened) & {
-      color: var(--color-brand-1);
-
-      > span {
-        span {
-          &:first-child {
-            transform: translateY(calc(0.75rem - 2px)) rotate(45deg);
-          }
-
-          &:nth-child(2) {
-            opacity: 0;
-          }
-
-          &:last-child {
-            transform: translateY(calc(-0.75rem + 2px)) rotate(-45deg);
-          }
-        }
-      }
-    }
-  }
-</style>
-
-<script>
-  import { addScrollObserver } from "../utils/observers";
-
-  const heroSelectors = ["sy-hero-home"];
-
-  class Header extends HTMLElement {
-    smallThreshold = 100;
-    hiddenThreshold = 200;
-    toggleEl = this.querySelector(".toggle")!;
-    hero = document.querySelector(heroSelectors.join(","));
-    prevY = -1;
-
-    constructor() {
-      super();
-
-      addScrollObserver(this);
-
-      this.toggleEl.addEventListener("click", this.toggleNav);
-
-      // addResizeObserver(this);
-
-      this.onResize();
-      this.onScroll(window.scrollY);
-    }
-
-    onScroll(y: number) {
-      const isDown = y > this.prevY ? true : false;
-      this.prevY = y;
-
-      const classList = document.body.classList;
-
-      const shouldBeSmall = y > this.smallThreshold;
-      const isSmall = classList.contains("is-nav-small");
-
-      if (shouldBeSmall !== isSmall) {
-        classList.toggle("is-nav-small", shouldBeSmall);
-      }
-
-      const shouldBeHidden = y > this.hiddenThreshold && isDown;
-      const isHidden = classList.contains("is-nav-hidden");
-
-      if (shouldBeHidden !== isHidden) {
-        classList.toggle("is-nav-hidden", shouldBeHidden);
-      }
-    }
-
-    toggleNav = () => {
-      document.body.classList.toggle("is-nav-opened");
-    };
-
-    onResize() {
-      const hero = this.hero;
-      const bcr = this.getBoundingClientRect();
-      const heroBcr = hero && hero.getBoundingClientRect();
-
-      this.smallThreshold = heroBcr ? heroBcr.height - bcr.height : bcr.height;
-    }
-  }
-
-  customElements.define("sy-head", Header);
-</script>

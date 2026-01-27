@@ -1,156 +1,35 @@
 ---
-import Logo from "../assets/logo.svg";
-import type { Link } from "../types";
+import { useTranslations } from "../i18n/utils";
 
 interface Props {
-  logoUrl: string;
-  logoAlt: string;
-  links: Link[];
+  lang: string;
 }
 
-const { logoUrl, logoAlt, links } = Astro.props;
+const { lang } = Astro.props;
+const t = useTranslations(lang as any);
+const year = new Date().getFullYear();
 ---
 
-<sy-footer>
-  <footer>
-    <div class="inner u-container">
-      <div class="wrapper">
-        <a class="logo" href={logoUrl}>
-          <Logo />
-          <span class="u-sr-only">{logoAlt}</span>
-        </a>
-
-        <div class="menu">
-          <ul>
-            {
-              links.map((l) => (
-                <li>
-                  <a href={l.url}>{l.title}</a>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-        <p class="cp">© {new Date().getFullYear()} {logoAlt}</p>
-      </div>
+<footer class="border-t border-border bg-muted/30 py-8 mt-auto">
+  <div
+    class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4"
+  >
+    <div class="text-sm text-muted-foreground">
+      &copy; {year} MD Editor. {t("footer.rights")}
     </div>
-  </footer>
-</sy-footer>
 
-<style>
-  sy-footer {
-    @extend %u-text;
-
-    --fs: var(--font-size-sm);
-    display: block;
-    clip-path: inset(0);
-
-    :global(&.has-no-anim footer) {
-      position: static;
-    }
-  }
-
-  footer {
-    background: #1f2023;
-    color: rgba(255, 255, 255, 0.8);
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-  }
-
-  .inner {
-    padding: 2rem 0;
-  }
-
-  .logo {
-    position: relative;
-    z-index: 3;
-
-    svg {
-      width: 4.8rem;
-      height: 1.5rem;
-
-      :global(path) {
-        fill: currentcolor;
-      }
-    }
-  }
-
-  .menu {
-    ul {
-      display: flex;
-      padding: 0;
-      gap: 1rem;
-      margin: 0;
-      list-style: none;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-
-      a {
-        text-decoration: none;
-        position: relative;
-
-        &::after {
-          content: "";
-          position: absolute;
-          height: 2px;
-          background: currentcolor;
-          top: 115%;
-          width: 100%;
-          left: 0;
-          pointer-events: none;
-          transform: scaleX(0);
-          transition: transform 0.3s var(--ease-out-expo);
-          transform-origin: right;
-        }
-
-        &:hover,
-        &:focus {
-          &::after {
-            transform: scaleX(1);
-            transform-origin: left;
-          }
-        }
-      }
-    }
-  }
-
-  .wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-
-    @media (--mq-tablet) {
-      flex-direction: column;
-    }
-  }
-</style>
-
-<script>
-  import { addResizeObserver } from "../utils/observers";
-
-  class Footer extends HTMLElement {
-    connectedCallback() {
-      addResizeObserver(this);
-
-      this.onResize();
-    }
-
-    onResize() {
-      const inner = this.firstElementChild as HTMLElement;
-      const bcr = inner.getBoundingClientRect();
-
-      if (bcr.height + 100 > window.innerHeight) {
-        this.style.height = "";
-        this.classList.add("has-no-anim");
-      } else {
-        this.style.height = `${bcr.height}px`;
-        this.classList.remove("has-no-anim");
-      }
-    }
-  }
-
-  customElements.define("sy-footer", Footer);
-</script>
+    <div class="flex items-center gap-6 text-sm text-muted-foreground">
+      <a
+        href={`/${lang}/privacy`}
+        class="hover:text-foreground transition-colors">{t("footer.privacy")}</a
+      >
+      <a href={`/${lang}/terms`} class="hover:text-foreground transition-colors"
+        >{t("footer.terms")}</a
+      >
+      <a
+        href="mailto:contact@example.com"
+        class="hover:text-foreground transition-colors">{t("footer.contact")}</a
+      >
+    </div>
+  </div>
+</footer>
