@@ -1,0 +1,28 @@
+{
+  "site.title": "Editor de Markdown e Leitura",
+  "site.description": "Um editor Markdown minimalista com pré-visualização ao vivo e cálculo de tempo de leitura.",
+  
+  "nav.features": "Funcionalidades",
+  "nav.howItWorks": "Como funciona",
+  "nav.support": "Suporte",
+  "nav.buyMeCoffee": "Pague um café",
+
+  "hero.headline": "Legível & Editável",
+  "hero.subheadline": "Cole Markdown ou envie um arquivo para visualizar com preview ao vivo e estimativa de tempo de leitura.",
+  "hero.feature.livePreview": "Preview ao Vivo",
+  "hero.feature.readingTime": "Tempo de Leitura",
+  "hero.feature.fileUpload": "Upload de Arquivo",
+
+  "workspace.upload": "Carregar .md",
+  "workspace.clear": "Limpar",
+  "workspace.words": "palavras",
+  "workspace.minutes": "min de leitura",
+  "workspace.placeholder.editor": "Digite ou cole seu Markdown aqui...",
+  "workspace.placeholder.preview": "Seu preview aparecerá aqui...",
+  "workspace.ad.placeholder": "Publicidade",
+
+  "footer.privacy": "Política de Privacidade",
+  "footer.terms": "Termos de Uso",
+  "footer.contact": "Contato",
+  "footer.rights": "Todos os direitos reservados."
+}

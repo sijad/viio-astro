@@ -1,0 +1,28 @@
+{
+  "site.title": "Markdown Editor & Reader",
+  "site.description": "A minimalist Markdown editor with live preview and reading time calculation.",
+  
+  "nav.features": "Features",
+  "nav.howItWorks": "How it works",
+  "nav.support": "Support",
+  "nav.buyMeCoffee": "Buy me a coffee",
+
+  "hero.headline": "Readable & Writable",
+  "hero.subheadline": "Paste Markdown or upload a file to visualize it with live preview and reading time estimation.",
+  "hero.feature.livePreview": "Live Preview",
+  "hero.feature.readingTime": "Reading Time",
+  "hero.feature.fileUpload": "File Upload",
+
+  "workspace.upload": "Upload .md",
+  "workspace.clear": "Clear",
+  "workspace.words": "words",
+  "workspace.minutes": "min read",
+  "workspace.placeholder.editor": "Type or paste your Markdown here...",
+  "workspace.placeholder.preview": "Your preview will appear here...",
+  "workspace.ad.placeholder": "Advertisement",
+
+  "footer.privacy": "Privacy Policy",
+  "footer.terms": "Terms of Service",
+  "footer.contact": "Contact",
+  "footer.rights": "All rights reserved."
+}
