@@ -1,0 +1,25 @@
+---
+interface Props {
+  position?: "left" | "right" | "top" | "bottom";
+}
+
+const { position = "top" } = Astro.props;
+---
+
+<div
+  class="ad-slot w-full h-[600px] bg-muted/20 border border-dashed border-border rounded-lg flex items-center justify-center text-sm text-muted-foreground"
+>
+  <span class="opacity-50">Ad Space ({position})</span>
+  <!-- Placeholder. In production, uncomment script below and insert actual ad unit code -->
+  <!-- 
+  <ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-YOUR_ID_HERE"
+     data-ad-slot="YOUR_SLOT_ID"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+  <script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+  -->
+</div>

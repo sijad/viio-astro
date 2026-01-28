@@ -1,66 +1,44 @@
 ---
-import { Font } from "astro:assets";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import SmoothScroll from "../components/SmoothScroll.astro";
-import { useTranslations } from "../i18n/utils";
 import "../styles/global.css";
+import { useTranslations } from "../i18n/utils";
 
-const { title } = Astro.props;
-const t = useTranslations();
+interface Props {
+  title: string;
+  lang: "en" | "pt" | "es";
+}
 
-const links = [
-  { title: "Home", url: "/" },
-  { title: "About", url: "/" },
-  { title: "Contact", url: "/" },
-];
+const { title, lang } = Astro.props;
+const t = useTranslations(lang);
 ---
 
-<html lang="en">
+<!doctype html>
+<html lang={lang} class:list={[{ dark: false }]}>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <Font cssVariable="--font-roboto-slab" preload />
-    <Font cssVariable="--font-inter" preload />
-    <title>{title}</title>
-  </head>
-  <body>
-    <a href="#main" class="skip-link">{t("accessibility.skip-to-content")}</a>
-    <Header
-      logoUrl="/"
-      logoAlt="VIIO"
-      links={links}
-      link1={{ title: "Login", url: "#" }}
-      link2={{ title: "Get Started", url: "#" }}
+    <meta charset="UTF-8" />
+    <meta name="description" content={t("site.description")} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
     />
-    <main id="main">
-      <slot />
-    </main>
-    <Footer logoUrl="/" logoAlt="VIIO" links={links} />
-    <SmoothScroll />
+
+    <title>{t("site.title")}</title>
+
+    <!-- AdSense Script (Commented until approval) -->
+    <!-- 
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ID_HERE"
+     crossorigin="anonymous"></script> 
+    -->
+  </head>
+  <body
+    class="min-h-screen bg-background text-foreground antialiased flex flex-col"
+  >
+    <slot />
   </body>
 </html>
-
-<style>
-  .skip-link {
-    background: var(--color-brand-1);
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: min-content;
-    white-space: nowrap;
-    padding: 0.5rem;
-    position: absolute;
-    transform: translateY(-100%);
-    transition: transform 0.3s ease;
-    z-index: 100;
-  }
-
-  .skip-link:focus {
-    transform: translateY(0%);
-  }
-</style>
-
-<script>
-  import "../utils/reveals";
-</script>

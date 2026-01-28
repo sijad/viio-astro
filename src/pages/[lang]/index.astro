@@ -1,0 +1,49 @@
+---
+import { languages } from "../../i18n/ui";
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import Hero from "../../components/Hero.astro";
+import AdSlot from "../../components/AdSlot.astro";
+import { MarkdownWorkspace } from "../../components/MarkdownWorkspace";
+
+export function getStaticPaths() {
+  return Object.keys(languages).map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+---
+
+<Layout title="Markdown Editor" lang={lang}>
+  <Header lang={lang} />
+
+  <main class="flex-1 flex flex-col">
+    <Hero lang={lang} />
+
+    <div
+      class="container mx-auto px-4 py-8 flex-1 flex flex-col md:flex-row gap-6"
+    >
+      <!-- Left Ad Slot (Desktop) -->
+      <aside class="hidden xl:block w-[160px] flex-shrink-0">
+        <div class="sticky top-24">
+          <AdSlot position="left" />
+        </div>
+      </aside>
+
+      <!-- Main Workspace -->
+      <div class="flex-1 min-w-0">
+        <!-- Workspace placeholder until M5 -->
+        <MarkdownWorkspace client:only="react" lang={lang} />
+      </div>
+
+      <!-- Right Ad Slot (Desktop) -->
+      <aside class="hidden xl:block w-[160px] flex-shrink-0">
+        <div class="sticky top-24">
+          <AdSlot position="right" />
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <Footer lang={lang} />
+</Layout>
