@@ -6,7 +6,7 @@ import SmoothScroll from "../components/SmoothScroll.astro";
 import { useTranslations } from "../i18n/utils";
 import "../styles/global.css";
 
-const { title } = Astro.props;
+const { title: _title } = Astro.props;
 const t = useTranslations();
 
 const links = [
@@ -14,6 +14,12 @@ const links = [
   { title: "About", url: "/" },
   { title: "Contact", url: "/" },
 ];
+
+const titleSuffix = " | Modern Visual Experience";
+const ogType = "website";
+const ogUrl = "https://viio.pages.dev/";
+const ogImage = "https://viio.pages.dev/og.png";
+const title = `${_title}${titleSuffix}`;
 ---
 
 <html lang="en">
@@ -22,6 +28,12 @@ const links = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <Font cssVariable="--font-roboto-slab" preload />
     <Font cssVariable="--font-inter" preload />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta property="og:title" content={title} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={ogUrl} />
+    <meta property="og:image" content={ogImage} />
     <title>{title}</title>
   </head>
   <body>

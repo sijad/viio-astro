@@ -5,7 +5,26 @@
 <sy-gl></sy-gl>
 
 <script>
-  import * as THREE from "three";
+  import {
+    Color,
+    ExtrudeGeometry,
+    Group,
+    IcosahedronGeometry,
+    LinearFilter,
+    Matrix4,
+    Mesh,
+    OrthographicCamera,
+    PlaneGeometry,
+    Raycaster,
+    RGBAFormat,
+    Scene,
+    ShaderMaterial,
+    Shape,
+    Vector2,
+    Vector3,
+    WebGLRenderer,
+    WebGLRenderTarget,
+  } from "three";
   import gsap from "gsap";
   import ScrollTrigger from "gsap/ScrollTrigger";
   import { addResizeObserver } from "../utils/observers";
@@ -21,11 +40,11 @@
   const BEVEL_SEGMENTS = 2;
 
   const container = document.querySelector("sy-gl") as HTMLElement;
-  const scene = new THREE.Scene();
+  const scene = new Scene();
 
   let aspect = window.innerWidth / window.innerHeight;
 
-  const camera = new THREE.OrthographicCamera(
+  const camera = new OrthographicCamera(
     (-FRUSTUM_SIZE * aspect) / 2,
     (FRUSTUM_SIZE * aspect) / 2,
     FRUSTUM_SIZE / 2,
@@ -37,7 +56,7 @@
   camera.lookAt(0, 0, 0);
   camera.updateProjectionMatrix();
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const renderer = new WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio ?? 1, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor("#fff");
@@ -50,19 +69,19 @@
     uTime: { value: 0 },
     uVel: { value: 0 },
     uResolution: {
-      value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+      value: new Vector2(window.innerWidth, window.innerHeight),
     },
   };
 
   // ─── Render target for refraction ─────────────────────────────────────────────
 
-  const renderTarget = new THREE.WebGLRenderTarget(
+  const renderTarget = new WebGLRenderTarget(
     window.innerWidth,
     window.innerHeight,
     {
-      minFilter: THREE.LinearFilter,
-      magFilter: THREE.LinearFilter,
-      format: THREE.RGBAFormat,
+      minFilter: LinearFilter,
+      magFilter: LinearFilter,
+      format: RGBAFormat,
       depthBuffer: false,
       stencilBuffer: false,
       generateMipmaps: false,
@@ -237,7 +256,7 @@ float snoise(vec3 v) {
   const waves = WAVE_COLORS.map((color, i) => {
     const e = i + 1;
     return {
-      color: new THREE.Color(color),
+      color: new Color(color),
       noiseFreq: [
         2 + e / (WAVE_COLORS.length + 1),
         3 + e / (WAVE_COLORS.length + 1),
@@ -323,9 +342,9 @@ void main() {
 
   const circleUniforms = {
     ...globals,
-    uBaseColor: { value: new THREE.Color(BASE_COLOR) },
+    uBaseColor: { value: new Color(BASE_COLOR) },
     uNoiseFreq: {
-      value: new THREE.Vector2(0.0001, 0.0001).divideScalar(
+      value: new Vector2(0.0001, 0.0001).divideScalar(
         window.devicePixelRatio,
       ),
     },
@@ -334,40 +353,40 @@ void main() {
     uAlpha: { value: 0 },
   };
 
-  const circle = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.7, 1.7, 100, 100),
-    new THREE.ShaderMaterial({
+  const circle = new Mesh(
+    new PlaneGeometry(1.7, 1.7, 100, 100),
+    new ShaderMaterial({
       vertexShader: circleVertexShader,
       fragmentShader: circleFragmentShader,
       uniforms: circleUniforms,
     }),
   );
 
-  const ballGroup = new THREE.Group();
-  const panelsGroup = new THREE.Group();
+  const ballGroup = new Group();
+  const panelsGroup = new Group();
   scene.add(ballGroup);
   ballGroup.add(panelsGroup);
   ballGroup.add(circle);
   circle.scale.setScalar(0);
 
-  const baseGeo = new THREE.IcosahedronGeometry(RADIUS, DETAIL);
+  const baseGeo = new IcosahedronGeometry(RADIUS, DETAIL);
   const posAttr = baseGeo.attributes.position;
   const faceCount = posAttr.count / 3;
 
   type FaceData = {
-    mesh: THREE.Mesh;
-    normal: THREE.Vector3;
-    center: THREE.Vector3;
+    mesh: Mesh;
+    normal: Vector3;
+    center: Vector3;
     originalOffset: number;
   };
 
   const faceData: FaceData[] = [];
 
-  const _vA = new THREE.Vector3();
-  const _vB = new THREE.Vector3();
-  const _vC = new THREE.Vector3();
-  const _normal = new THREE.Vector3();
-  const _center = new THREE.Vector3();
+  const _vA = new Vector3();
+  const _vB = new Vector3();
+  const _vC = new Vector3();
+  const _normal = new Vector3();
+  const _center = new Vector3();
 
   for (let fi = 0; fi < faceCount; fi++) {
     const i3 = fi * 3;
@@ -383,28 +402,28 @@ void main() {
       .add(_vC)
       .multiplyScalar(1 / 3);
 
-    const shrink = (v: THREE.Vector3) => _center.clone().lerp(v, SHAPE_OFFSET);
+    const shrink = (v: Vector3) => _center.clone().lerp(v, SHAPE_OFFSET);
     const sA = shrink(_vA);
     const sB = shrink(_vB);
     const sC = shrink(_vC);
 
     const u = sB.clone().sub(sA).normalize();
     const w = _normal.clone();
-    const vDir = new THREE.Vector3().crossVectors(w, u);
+    const vDir = new Vector3().crossVectors(w, u);
 
-    const to2D = (v: THREE.Vector3): THREE.Vector2 => {
+    const to2D = (v: Vector3): Vector2 => {
       const vec = v.clone().sub(sA);
-      return new THREE.Vector2(vec.dot(u), vec.dot(vDir));
+      return new Vector2(vec.dot(u), vec.dot(vDir));
     };
 
     const [p0, p1, p2] = [to2D(sA), to2D(sB), to2D(sC)];
-    const shape = new THREE.Shape();
+    const shape = new Shape();
     shape.moveTo(p0.x, p0.y);
     shape.lineTo(p1.x, p1.y);
     shape.lineTo(p2.x, p2.y);
     shape.lineTo(p0.x, p0.y);
 
-    const geom = new THREE.ExtrudeGeometry(shape, {
+    const geom = new ExtrudeGeometry(shape, {
       steps: 2,
       depth: THICKNESS,
       bevelEnabled: false,
@@ -413,11 +432,11 @@ void main() {
       bevelSegments: BEVEL_SEGMENTS,
     });
 
-    const matrix = new THREE.Matrix4().makeBasis(u, vDir, w).setPosition(sA);
+    const matrix = new Matrix4().makeBasis(u, vDir, w).setPosition(sA);
     geom.applyMatrix4(matrix);
     geom.computeVertexNormals();
 
-    const mat = new THREE.ShaderMaterial({
+    const mat = new ShaderMaterial({
       vertexShader: panelVertexShader,
       fragmentShader: panelFragmentShader,
       uniforms: {
@@ -436,7 +455,7 @@ void main() {
       transparent: true,
     });
 
-    const mesh = new THREE.Mesh(geom, mat);
+    const mesh = new Mesh(geom, mat);
     panelsGroup.add(mesh);
     faceData.push({
       mesh,
@@ -446,8 +465,8 @@ void main() {
     });
   }
 
-  const mouse = new THREE.Vector2();
-  const raycaster = new THREE.Raycaster();
+  const mouse = new Vector2();
+  const raycaster = new Raycaster();
   const toggled = new Set<number>();
 
   document.addEventListener("pointermove", (e) => {
@@ -465,7 +484,7 @@ void main() {
 
   function togglePanel(idx: number) {
     const { mesh } = faceData[idx];
-    const uniforms = (mesh.material as THREE.ShaderMaterial).uniforms;
+    const uniforms = (mesh.material as ShaderMaterial).uniforms;
     const isOn = toggled.has(idx);
     isOn ? toggled.delete(idx) : toggled.add(idx);
 
@@ -528,10 +547,10 @@ void main() {
     const ease = "elastic.out(1.3, 0.7)";
 
     const displaces = faceData.map(
-      (f) => (f.mesh.material as THREE.ShaderMaterial).uniforms.uDisplacement,
+      (f) => (f.mesh.material as ShaderMaterial).uniforms.uDisplacement,
     );
     const alphas = faceData.map(
-      (f) => (f.mesh.material as THREE.ShaderMaterial).uniforms.uAlpha,
+      (f) => (f.mesh.material as ShaderMaterial).uniforms.uAlpha,
     );
 
     gsap.to(displaces, { value: 0, duration: 0.7, ease });
